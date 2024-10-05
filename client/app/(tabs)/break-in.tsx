@@ -24,7 +24,7 @@ const BreakIn = () => {
         }
     };
 
-    const simulateBreakIn = async () => {
+    const sendPush = async () => {
         try {
             // send push notification
             await Notifications.scheduleNotificationAsync({
@@ -36,19 +36,32 @@ const BreakIn = () => {
                 trigger: null,
             });
 
-            // send email
-            const response = await axios.get('http://10.48.1.38:5000/simulate-breakin'); //ip address for computer idk why it's not working
-            console.log(response.data);  // Check response from Python server
         } catch (error) {
             console.error('Error:', error);
             Alert.alert('Error', 'Failed to send break-in alert. Please try again.');
         }
     };
 
+    const sendEmail = () => {
+        console.log('attempting to send email')
+        axios.post('http://10.48.1.38:5000/simulate-breakin')  // ip address
+            .then((response) => {
+                Alert.alert('Success', response.data.status);
+            })
+            .catch((error) => {
+                Alert.alert('Error', 'Failed to run the script');
+            });
+    };
+
+    const simulateBreakin = async () => {
+        sendPush();
+        sendEmail();
+    }
+
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Break In Screen</Text>
-            <Button title="Simulate Break-In" onPress={simulateBreakIn} />
+            <Button title="Simulate Break-In" onPress={simulateBreakin} />
         </View>
     );
 };
