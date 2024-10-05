@@ -37,6 +37,7 @@ def unlock_the_lock():
 
 @app.route('/sus', methods=['GET'])
 def check_suspicious_activity():
+    print(lock.suspicious_activity_flag)
     if lock.suspicious_activity_flag:
         return jsonify({"status": "SUS"})
     else:
