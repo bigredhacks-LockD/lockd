@@ -1,6 +1,6 @@
 // app/tabs/BreakIn.tsx
-import React, { useEffect } from 'react';
-import { View, Text, Button, Alert, StyleSheet, useColorScheme } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, Button, Alert, StyleSheet, useColorScheme, TouchableOpacity } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import axios from 'axios';
 
@@ -13,41 +13,11 @@ Notifications.setNotificationHandler({
 });
 
 
-
-const sendPush = async () => {
-    try {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "Intruder Alert!",
-                body: "Suspicious activity has been detected at the lock!",
-                sound: 'default',
-            },
-            trigger: null,
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        Alert.alert('Error', 'Failed to send break-in alert. Please try again.');
-    }
-};
-
-const sendEmail = async () => {
-    console.log('Attempting to send email');
-    axios.post('http://10.48.1.38:5000/simulate-breakin')
-        .then((response) => {
-            Alert.alert('Success', response.data.status);
-        })
-        .catch((error) => {
-            Alert.alert('Error', 'Failed to run the script');
-        });
-};
-
-export const breakIn = async () => {
-    await sendPush();
-    await sendEmail();
-};
-
 export const BreakIn = () => {
     const colorScheme = useColorScheme();
+    const [isPolling, setIsPolling] = useState(false);
+
+    let intervalId: any = null;
 
     useEffect(() => {
         requestPermissions();
@@ -60,6 +30,63 @@ export const BreakIn = () => {
         }
     };
 
+    const sendPush = async () => {
+        try {
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Intruder Alert!",
+                    body: "Suspicious activity has been detected at the lock!",
+                    sound: 'default',
+                },
+                trigger: null,
+            });
+        } catch (error) {
+            console.error('Error:', error);
+            Alert.alert('Error', 'Failed to send break-in alert. Please try again.');
+        }
+    };
+
+    const sendEmail = async () => {
+        console.log('Attempting to send email');
+        axios.post('http://10.48.1.38:5000/simulate-breakin')
+            .then((response) => {
+                Alert.alert('Success', response.data.status);
+            })
+            .catch((error) => {
+                Alert.alert('Error', 'Failed to run the script');
+            });
+    };
+
+    const breakIn = async () => {
+        await sendPush();
+        await sendEmail();
+    };
+
+
+    const togglePolling = () => {
+        setIsPolling((prev) => !prev); // Toggle polling state
+    };
+
+    useEffect(() => {
+        const checkLockStatus = async () => {
+            try {
+                const response = await axios.get(`https://846f-128-84-127-2.ngrok-free.app/sus`);
+                console.log(response.data);
+                if (response.data.status == "SUS") {
+                    breakIn();
+                }
+            } catch (error) {
+                console.error('Error fetching lock status:', error);
+            }
+        }
+        if (isPolling) {
+            intervalId = setInterval(checkLockStatus, 2000);
+        }
+        return () => clearInterval(intervalId);
+    }, [isPolling])
+
+
+
     return (
         <View style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
             <Text style={[styles.title, colorScheme === 'dark' ? styles.darkTitle : styles.lightTitle]}>
@@ -68,7 +95,19 @@ export const BreakIn = () => {
             <Text style={[styles.description, colorScheme === 'dark' ? styles.darkDescription : styles.lightDescription]}>
                 Press the button below to simulate a break-in and trigger notifications.
             </Text>
-            <Button title="Simulate Break-In" onPress={breakIn} color={colorScheme === 'dark' ? '#007BFF' : '#4CAF50'} />
+            <TouchableOpacity
+                style={[styles.button]} // Change color based on state
+                onPress={breakIn}
+            >
+                <Text style={styles.buttonText}>Simulate Break-In</Text>
+            </TouchableOpacity>
+            {/* Start/Stop Polling Button */}
+            <TouchableOpacity
+                style={[styles.button, { backgroundColor: isPolling ? '#f00' : '#4CAF50' }]} // Change color based on state
+                onPress={togglePolling}
+            >
+                <Text style={styles.buttonText}>{isPolling ? 'Stop Polling' : 'Start Polling'}</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -107,6 +146,17 @@ const styles = StyleSheet.create({
     },
     darkDescription: {
         color: '#DDD', // Dark mode description color
+    },
+    button: {
+        borderRadius: 25,
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        marginBottom: 20,
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
 
