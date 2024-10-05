@@ -1,11 +1,14 @@
 from flask import Flask, jsonify
 import subprocess
 
+
 app = Flask(__name__)
 
-@app.route('/simulate-breakin', methods=['GET'])
+@app.route('/simulate-breakin', methods=['POST'])
 def simulate_breakin():
+    # run the python script
     subprocess.run(['python', 'email-script.py'], check=True)
+    
     print("Simulating break-in...")
     return jsonify({"status": "Break-in simulation started!"})
 
