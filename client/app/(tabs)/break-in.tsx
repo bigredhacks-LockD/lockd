@@ -12,8 +12,42 @@ Notifications.setNotificationHandler({
     }),
 });
 
-const BreakIn = () => {
-    const colorScheme = useColorScheme(); // Detect the current color scheme
+
+
+const sendPush = async () => {
+    try {
+        await Notifications.scheduleNotificationAsync({
+            content: {
+                title: "Intruder Alert!",
+                body: "Suspicious activity has been detected at the lock!",
+                sound: 'default',
+            },
+            trigger: null,
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        Alert.alert('Error', 'Failed to send break-in alert. Please try again.');
+    }
+};
+
+const sendEmail = async () => {
+    console.log('Attempting to send email');
+    axios.post('http://10.48.1.38:5000/simulate-breakin')
+        .then((response) => {
+            Alert.alert('Success', response.data.status);
+        })
+        .catch((error) => {
+            Alert.alert('Error', 'Failed to run the script');
+        });
+};
+
+export const breakIn = async () => {
+    await sendPush();
+    await sendEmail();
+};
+
+export const BreakIn = () => {
+    const colorScheme = useColorScheme();
 
     useEffect(() => {
         requestPermissions();
@@ -26,39 +60,6 @@ const BreakIn = () => {
         }
     };
 
-    const sendPush = async () => {
-        try {
-            // send push notification
-            await Notifications.scheduleNotificationAsync({
-                content: {
-                    title: "Intruder Alert!",
-                    body: "Suspicious activity has been detected at the lock!",
-                    sound: 'default',
-                },
-                trigger: null,
-            });
-        } catch (error) {
-            console.error('Error:', error);
-            Alert.alert('Error', 'Failed to send break-in alert. Please try again.');
-        }
-    };
-
-    const sendEmail = () => {
-        console.log('Attempting to send email');
-        axios.post('http://10.48.1.38:5000/simulate-breakin') // IP address
-            .then((response) => {
-                Alert.alert('Success', response.data.status);
-            })
-            .catch((error) => {
-                Alert.alert('Error', 'Failed to run the script');
-            });
-    };
-
-    const simulateBreakin = async () => {
-        sendPush();
-        sendEmail();
-    };
-
     return (
         <View style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
             <Text style={[styles.title, colorScheme === 'dark' ? styles.darkTitle : styles.lightTitle]}>
@@ -67,7 +68,7 @@ const BreakIn = () => {
             <Text style={[styles.description, colorScheme === 'dark' ? styles.darkDescription : styles.lightDescription]}>
                 Press the button below to simulate a break-in and trigger notifications.
             </Text>
-            <Button title="Simulate Break-In" onPress={simulateBreakin} color={colorScheme === 'dark' ? '#007BFF' : '#4CAF50'} />
+            <Button title="Simulate Break-In" onPress={breakIn} color={colorScheme === 'dark' ? '#007BFF' : '#4CAF50'} />
         </View>
     );
 };

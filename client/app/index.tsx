@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Status from './(tabs)/status';
 import BreakIn from './(tabs)/break-in';
-import io from 'socket.io-client'
+// import io from 'socket.io-client'
+import axios from 'axios';
 
 const Tab = createBottomTabNavigator();
 
