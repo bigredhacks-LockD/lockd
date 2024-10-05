@@ -2,10 +2,13 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Status from './(tabs)/status';
 import BreakIn from './(tabs)/break-in';
+import io from 'socket.io-client'
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
+
+
   return (
     <Tab.Navigator
       screenOptions={{

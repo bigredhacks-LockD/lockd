@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, useColorScheme } from 'react-native';
+import axios from 'axios';
 
 const HomeScreen = () => {
   const colorScheme = useColorScheme(); // Detect the current color scheme
+  const ngrokKey = "846f"
 
-  const handleLockToggle = () => {
-    // Logic for locking/unlocking
+  const [isDisabled, setIsDisabled] = useState(false);
+
+
+  const handleLock = async () => {
+    //logic for locking
+    console.log('attempting to lock door!');
+    setIsDisabled(true); // Disable buttons
+    await axios.get(`https://${ngrokKey}-128-84-127-2.ngrok-free.app/lock`);
+    // Wait for 1 second before re-enabling the buttons
+    setTimeout(() => {
+      setIsDisabled(false); // Re-enable buttons
+    }, 1000);
+  };
+
+  const handleUnlock = async () => {
+    //logic for unlocking
+    console.log('attempting to unlock door!')
+    setIsDisabled(true);
+    await axios.get(`https://${ngrokKey}-128-84-127-2.ngrok-free.app/unlock`);
+    setTimeout(() => {
+      setIsDisabled(false);
+    }, 1000);
   };
 
   return (
@@ -14,7 +36,10 @@ const HomeScreen = () => {
       <Text style={[styles.status, colorScheme === 'dark' ? styles.darkStatus : styles.lightStatus]}>
         Status: Locked
       </Text>
-      <TouchableOpacity style={[styles.button, colorScheme === 'dark' ? styles.darkButton : styles.lightButton]} onPress={handleLockToggle}>
+      <TouchableOpacity style={[styles.button, colorScheme === 'dark' ? styles.darkButton : styles.lightButton]} onPress={handleLock} disabled={isDisabled}>
+        <Text style={styles.buttonText}>Lock</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, colorScheme === 'dark' ? styles.darkButton : styles.lightButton]} onPress={handleUnlock} disabled={isDisabled}>
         <Text style={styles.buttonText}>Unlock</Text>
       </TouchableOpacity>
       <View style={styles.footer}>
