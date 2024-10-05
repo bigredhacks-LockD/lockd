@@ -1,11 +1,20 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, useColorScheme } from 'react-native';
+import axios from 'axios';
 
 const HomeScreen = () => {
   const colorScheme = useColorScheme(); // Detect the current color scheme
 
-  const handleLockToggle = () => {
-    // Logic for locking/unlocking
+  const handleLock = async () => {
+    //logic for locking
+    console.log('attempting to lock door!')
+    axios.get('https://<four-digit key>-128-84-127-2.ngrok-free.app/lock');
+  };
+
+  const handleUnlock = async () => {
+    //logic for unlocking
+    console.log('attempting to unlock door!')
+    axios.get('https://<four-digit key>-128-84-127-2.ngrok-free.app/unlock');
   };
 
   return (
@@ -14,7 +23,10 @@ const HomeScreen = () => {
       <Text style={[styles.status, colorScheme === 'dark' ? styles.darkStatus : styles.lightStatus]}>
         Status: Locked
       </Text>
-      <TouchableOpacity style={[styles.button, colorScheme === 'dark' ? styles.darkButton : styles.lightButton]} onPress={handleLockToggle}>
+      <TouchableOpacity style={[styles.button, colorScheme === 'dark' ? styles.darkButton : styles.lightButton]} onPress={handleLock}>
+        <Text style={styles.buttonText}>Lock</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, colorScheme === 'dark' ? styles.darkButton : styles.lightButton]} onPress={handleUnlock}>
         <Text style={styles.buttonText}>Unlock</Text>
       </TouchableOpacity>
       <View style={styles.footer}>
