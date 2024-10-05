@@ -17,8 +17,6 @@ shock_sensor = ShockSensor(pin=17)  # Replace with actual pin
 # Create a Lock object
 lock:Lock = None
 
-# Shared variable to track suspicious activity
-suspicious_activity = False
 
 @app.route('/')
 def index():
@@ -39,7 +37,7 @@ def unlock_the_lock():
 
 @app.route('/sus', methods=['GET'])
 def check_suspicious_activity():
-    if suspicious_activity:
+    if lock.suspicious_activity_flag:
         return jsonify({"status": "SUS"})
     else:
         return jsonify({"status": ""})

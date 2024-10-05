@@ -11,6 +11,11 @@ class Lock:
         self.shock_sensor = shock_sensor
         self.thread_running = False
 
+        # Flags and timers
+        self.sound_flag = False
+        self.shock_flag = False
+        self.suspicious_activity_flag = False
+
     def lock(self):
         self.controller.move_servos({0: 2500})
         time.sleep(2)
@@ -24,22 +29,36 @@ class Lock:
     def rest(self):
         self.controller.hat.turnOffAllPWM()
 
-    def check_sensors(self):
-        """Check if both sound and shock sensors detect activity."""
-        sound_detected = self.sound_sensor.detect_sound()
-        shock_detected = self.shock_sensor.shock_detected  # Check if the shock sensor detected something
+    def activate_flag(self, flag_name: str, duration: int):
+        """Helper function to activate a flag for a certain duration."""
+        setattr(self, flag_name, True)
+        time.sleep(duration)
+        setattr(self, flag_name, False)
 
-        if sound_detected and shock_detected:
-            print("Suspicious activity detected: Sound and Shock sensors triggered!")
-            # Reset the shock sensor flag after handling it
-            self.shock_sensor.clear_shock_flag()
-        elif shock_detected:
-            self.shock_sensor.clear_shock_flag()
+    def check_sensors(self):
+        """Check if sound or shock sensors detect activity and handle the flags."""
+        sound_detected = self.sound_sensor.detect_sound()
+        shock_detected = self.shock_sensor.shock_detected
+
+        # Activate sound flag for 3 seconds if sound is detected
+        if sound_detected and not self.sound_flag:
+            threading.Thread(target=self.activate_flag, args=("sound_flag", 3)).start()
+
+        # Activate shock flag for 3 seconds if shock is detected
+        if shock_detected and not self.shock_flag:
+            threading.Thread(target=self.activate_flag, args=("shock_flag", 3)).start()
+            self.shock_sensor.clear_shock_flag()  # Clear shock flag after detecting
+
+        # Check if both sound and shock flags are active, activate suspicious activity flag for 5 seconds
+        if self.sound_flag and self.shock_flag and not self.suspicious_activity_flag:
+            print("Suspicious activity detected: Both sound and shock sensors triggered!")
+            threading.Thread(target=self.activate_flag, args=("suspicious_activity_flag", 5)).start()
 
     def alert_suspicious_activity(self):
         """Run in a thread to constantly monitor sensors."""
         while self.thread_running:
             self.check_sensors()
+            time.sleep(0.1)  # Slight delay to reduce CPU usage
 
     def start_alert_thread(self):
         self.thread_running = True
@@ -49,31 +68,3 @@ class Lock:
     def stop_alert_thread(self):
         self.thread_running = False
         self.alert_thread.join()  # Wait for the thread to finish
-
-if __name__ == "__main__":
-    try:
-        # Create instances of the ServoController, SoundSensor, and ShockSensor
-        servo_controller = ServoController()
-        sound_sensor = SoundSensor(pin=4)  # Replace with actual pin
-        shock_sensor = ShockSensor(pin=17)  # Replace with actual pin
-
-        # Create the Lock object with both sensors
-        lock = Lock(controller=servo_controller, sound_sensor=sound_sensor, shock_sensor=shock_sensor)
-
-        # Start the alert thread
-        lock.start_alert_thread()
-
-        # Example usage of lock
-        lock.lock()
-        time.sleep(2)
-        lock.unlock()
-
-        # Keep the main thread alive to allow the sensor detection to continue
-        while True:
-            time.sleep(1)  # Keep the main program running
-
-    except KeyboardInterrupt:
-        print("PROGRAM INTERRUPTED. CLEANING UP GPIO")
-        lock.stop_alert_thread()  # Stop the alert thread
-        sound_sensor.cleanup()
-        shock_sensor.cleanup()
