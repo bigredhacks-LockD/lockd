@@ -15,7 +15,7 @@ class Lock:
         self.rest()
 
     def unlock(self):
-        self.controller.move_servos({0: 0})
+        self.controller.move_servos({0: 500})
         time.sleep(2)
         self.rest()
 
