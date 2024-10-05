@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { View, Text, Button, Alert } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import axios from 'axios';
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -24,14 +25,24 @@ const BreakIn = () => {
     };
 
     const simulateBreakIn = async () => {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "Intruder Alert!",
-                body: "Someone is attempting to break into your property!",
-                sound: 'default',
-            },
-            trigger: null,
-        });
+        try {
+            // send push notification
+            await Notifications.scheduleNotificationAsync({
+                content: {
+                    title: "Intruder Alert!",
+                    body: "Suspicious activity has been detected at the lock!",
+                    sound: 'default',
+                },
+                trigger: null,
+            });
+
+            // send email
+            const response = await axios.get('http://10.48.1.38:5000/simulate-breakin'); //ip address for computer idk why it's not working
+            console.log(response.data);  // Check response from Python server
+        } catch (error) {
+            console.error('Error:', error);
+            Alert.alert('Error', 'Failed to send break-in alert. Please try again.');
+        }
     };
 
     return (
