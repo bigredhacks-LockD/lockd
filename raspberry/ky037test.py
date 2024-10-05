@@ -1,28 +1,18 @@
 import RPi.GPIO as GPIO
-
 import time
 
+class SoundSensor:
+    def __init__(self, pin: int) -> None:
+        self.pin = pin
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-GPIO.setmode(GPIO.BCM)
-SOUND_SENSOR_PIN = 4
-GPIO.setup(SOUND_SENSOR_PIN, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    def detect_sound(self) -> bool:
+        return GPIO.input(self.pin) == 1
 
-
-
-def detect_sound():
-    sound_detected = GPIO.input(SOUND_SENSOR_PIN)
-
-
-    if sound_detected == 1:
-        print("Sound detected")
-    else
-        print("no sound")
-
-
-if __name__ == "__main__":
-    try:
-        while 1:
-            detect_sound()
-    except KeyboardInterrupt:
-        print("PROGRAM INTERRUPTED. CLEANING UP GPIO")
+    def cleanup(self) -> None:
         GPIO.cleanup()
+
+    def __del__(self):
+        # Ensure GPIO is cleaned up when object is deleted
+        self.cleanup()
