@@ -16,6 +16,8 @@ Notifications.setNotificationHandler({
 export const BreakIn = () => {
     const colorScheme = useColorScheme();
     const [isPolling, setIsPolling] = useState(false);
+    const [lastSuspiciousTime, setLastSuspiciousTime] = useState(0);
+
 
     let intervalId: any = null;
 
@@ -73,7 +75,15 @@ export const BreakIn = () => {
                 const response = await axios.get(`https://846f-128-84-127-2.ngrok-free.app/sus`);
                 console.log(response.data);
                 if (response.data.status == "SUS") {
-                    breakIn();
+                    const currentTime = Date.now();
+
+                    //10 second delay between alerts
+                    if (currentTime - lastSuspiciousTime > 10 * 1000) {
+                        await breakIn();
+                        setLastSuspiciousTime(currentTime);
+                    } else {
+                        console.log('Suspicious activity detected, but alert was recently sent. Skipping.')
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching lock status:', error);
@@ -96,10 +106,10 @@ export const BreakIn = () => {
                 Press the button below to simulate a break-in and trigger notifications.
             </Text>
             <TouchableOpacity
-                style={[styles.button]} // Change color based on state
+                style={[styles.button, styles.neutralButton]} // Apply neutral button style
                 onPress={breakIn}
             >
-                <Text style={styles.buttonText}>Simulate Break-In</Text>
+                <Text style={styles.neutralButtonText}>Simulate Break-In</Text>
             </TouchableOpacity>
             {/* Start/Stop Polling Button */}
             <TouchableOpacity
@@ -155,6 +165,14 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    neutralButton: {
+        backgroundColor: '#808080', // Neutral gray color
+    },
+    neutralButtonText: {
+        color: '#FFFFFF', // White text for contrast
         fontSize: 18,
         fontWeight: 'bold',
     },
