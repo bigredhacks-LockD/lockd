@@ -8,13 +8,13 @@ const HomeScreen = () => {
   const handleLock = async () => {
     //logic for locking
     console.log('attempting to lock door!')
-    axios.get('https://<four-digit key>-128-84-127-2.ngrok-free.app/lock');
+    axios.get('https://846f-128-84-127-2.ngrok-free.app/lock');
   };
 
   const handleUnlock = async () => {
     //logic for unlocking
     console.log('attempting to unlock door!')
-    axios.get('https://<four-digit key>-128-84-127-2.ngrok-free.app/unlock');
+    axios.get('https://846f-128-84-127-2.ngrok-free.app/unlock');
   };
 
   return (
