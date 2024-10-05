@@ -33,20 +33,13 @@ class Lock:
             print("Suspicious activity detected: Sound and Shock sensors triggered!")
             # Reset the shock sensor flag after handling it
             self.shock_sensor.clear_shock_flag()
-        elif sound_detected:
-            print("Sound detected!")
         elif shock_detected:
-            print("Shock detected!")
-            # Reset the shock sensor flag
             self.shock_sensor.clear_shock_flag()
-        else:
-            print("No suspicious activity detected.")
 
     def alert_suspicious_activity(self):
         """Run in a thread to constantly monitor sensors."""
         while self.thread_running:
             self.check_sensors()
-            time.sleep(1)  # Add a small delay between checks
 
     def start_alert_thread(self):
         self.thread_running = True
