@@ -16,3 +16,6 @@ class SoundSensor:
     def __del__(self):
         # Ensure GPIO is cleaned up when object is deleted
         self.cleanup()
+
+
+
