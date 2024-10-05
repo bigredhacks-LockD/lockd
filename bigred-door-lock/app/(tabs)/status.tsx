@@ -46,10 +46,10 @@ const Status = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Smart Lock</Text>
+      <Text style={styles.title}>Big Red Locks</Text>
 
       <View style={styles.statusContainer}>
-        {/* <Text style={styles.status}>Lock Status: {status}</Text> */}
+        <Text style={styles.status}>Lock Status: Locked</Text>
         <Text style={styles.vibration}>
           Vibration Detected: {vibration ? 'Yes' : 'No'}
         </Text>
