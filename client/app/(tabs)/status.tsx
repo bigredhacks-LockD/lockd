@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const HomeScreen = () => {
 	const colorScheme = useColorScheme(); // Detect the current color scheme
-	const ngrokKey = "4b7f"
+	const ngrokKey = "3661"
 
 	const [isDisabled, setIsDisabled] = useState(false);
 

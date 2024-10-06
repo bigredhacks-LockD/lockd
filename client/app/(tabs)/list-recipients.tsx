@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, RefreshControl, useColorScheme } from 'react-native';
 
 const RecipientList = () => {
     const [recipients, setRecipients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [refreshing, setRefreshing] = useState(false); // For pull-to-refresh
+    const colorScheme = useColorScheme(); // To detect light or dark mode
 
     useEffect(() => {
         fetchRecipients();
@@ -16,9 +18,11 @@ const RecipientList = () => {
             const data = await response.json();
             setRecipients(data.recipients);
             setLoading(false);
+            setRefreshing(false); // Stop the refresh animation after fetching data
         } catch (err) {
             setError('Failed to fetch recipients');
             setLoading(false);
+            setRefreshing(false); // Stop the refresh animation in case of error
         }
     };
 
@@ -41,12 +45,17 @@ const RecipientList = () => {
         }
     };
 
+    // Handle manual refresh by pull-to-refresh gesture or pressing the refresh button
+    const onRefresh = () => {
+        setRefreshing(true); // Show the refresh spinner
+        fetchRecipients();
+    };
 
     const renderItem = ({ item }) => (
-        <View style={styles.item}>
-            <View style={styles.recipientInfo}>
+        <View style={[styles.item, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
+            <View style={[styles.recipientInfo, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
                 <Text style={styles.email}>{item.name}</Text>
-                <View style={styles.details}>
+                <View style={[styles.details, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
                     <Text style={styles.dorm}>Dorm: {item.dorm}</Text>
                     <Text style={styles.room}>Room: {item.room}</Text>
                 </View>
@@ -69,12 +78,22 @@ const RecipientList = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
             <Text style={styles.title}>Recipients List</Text>
+            {/* refresh button */}
+            {/* <TouchableOpacity style={styles.refreshButton} onPress={onRefresh}>
+                <Text style={styles.refreshButtonText}>Refresh List</Text>
+            </TouchableOpacity> */}
             <FlatList
                 data={recipients}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.email}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
             />
         </View>
     );
@@ -84,13 +103,18 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#f5f5f5',
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 16,
         color: '#333',
+    },
+    lightContainer: {
+        backgroundColor: '#F5F5F5', // Light background
+    },
+    darkContainer: {
+        backgroundColor: '#1A1A1A', // Dark background
     },
     item: {
         backgroundColor: '#fff',
@@ -142,6 +166,18 @@ const styles = StyleSheet.create({
     removeButtonText: {
         color: '#fff',
         fontSize: 14,
+        fontWeight: 'bold',
+    },
+    refreshButton: {
+        backgroundColor: '#007AFF',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 16,
+        alignItems: 'center',
+    },
+    refreshButtonText: {
+        color: '#fff',
+        fontSize: 16,
         fontWeight: 'bold',
     },
 });

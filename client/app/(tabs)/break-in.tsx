@@ -73,26 +73,30 @@ export const BreakIn = () => {
 
     useEffect(() => {
         const checkLockStatus = async () => {
+            let lastSuspiciousTime = 0;
+
             try {
-                const response = await axios.get(`https://4b7f-128-84-127-2.ngrok-free.app/sus`);
+                const response = await axios.get(`https://3661-128-84-127-2.ngrok-free.app/sus`);
                 console.log(response.data);
-                if (response.data.status == "SUS") {
+
+                if (response.data.status === "SUS") {
                     const currentTime = Date.now();
 
-                    //10 second delay between alerts
+                    // 10-second delay between alerts
                     if (currentTime - lastSuspiciousTime > 10 * 1000) {
                         await breakIn();
-                        setLastSuspiciousTime(currentTime);
+                        lastSuspiciousTime = currentTime;  // Update the last alert time
                     } else {
-                        console.log('Suspicious activity detected, but alert was recently sent. Skipping.')
+                        console.log('Suspicious activity detected, but alert was recently sent. Skipping.');
                     }
                 }
             } catch (error) {
                 console.error('Error fetching lock status:', error);
             }
+
         }
         if (isPolling) {
-            intervalId = setInterval(checkLockStatus, 2000);
+            intervalId = setInterval(checkLockStatus, 1000);
         }
         return () => clearInterval(intervalId);
     }, [isPolling])
@@ -105,7 +109,7 @@ export const BreakIn = () => {
                 Break-In
             </Text>
             <Text style={[styles.description, colorScheme === 'dark' ? styles.darkDescription : styles.lightDescription]}>
-                (For demo purposes.)
+                (For demo purposes)
             </Text>
             <Text style={[styles.description, colorScheme === 'dark' ? styles.darkDescription : styles.lightDescription]}>
                 Press the button below to simulate a break-in and trigger notifications.
