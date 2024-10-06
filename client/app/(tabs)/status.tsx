@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const HomeScreen = () => {
 	const colorScheme = useColorScheme(); // Detect the current color scheme
-	const ngrokKey = "846f"
+	const ngrokKey = "4b7f"
 
 	const [isDisabled, setIsDisabled] = useState(false);
 
@@ -35,7 +35,7 @@ const HomeScreen = () => {
 
 	return (
 		<View style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
-			<Text style={[styles.title, colorScheme === 'dark' ? styles.darkTitle : styles.lightTitle]}>Smart Lock</Text>
+			<Text style={[styles.title, colorScheme === 'dark' ? styles.darkTitle : styles.lightTitle]}>Big Red Smart Lock</Text>
 			<Text style={[styles.status, colorScheme === 'dark' ? styles.darkStatus : styles.lightStatus]}>
 				Status: Locked
 			</Text>

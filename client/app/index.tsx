@@ -1,9 +1,10 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Status from './(tabs)/status';
 import BreakIn from './(tabs)/break-in';
-// import io from 'socket.io-client'
+import ListRecipients from './(tabs)/list-recipients';
 import axios from 'axios';
+import Recipients from './(tabs)/add-recipients';
 
 const Tab = createBottomTabNavigator();
 
@@ -25,8 +26,9 @@ const App = () => {
       }}
     >
       <Tab.Screen name="Status" component={Status} />
+      <Tab.Screen name="Add" component={Recipients} />
+      <Tab.Screen name="Neighbors" component={ListRecipients} />
       <Tab.Screen name="Break In" component={BreakIn} />
-      {/* <Tab.Screen name="Lock" component={Lock} /> */}
     </Tab.Navigator>
   );
 };

@@ -4,6 +4,8 @@ import { View, Text, Button, Alert, StyleSheet, useColorScheme, TouchableOpacity
 import * as Notifications from 'expo-notifications';
 import axios from 'axios';
 
+
+
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
@@ -72,7 +74,7 @@ export const BreakIn = () => {
     useEffect(() => {
         const checkLockStatus = async () => {
             try {
-                const response = await axios.get(`https://846f-128-84-127-2.ngrok-free.app/sus`);
+                const response = await axios.get(`https://4b7f-128-84-127-2.ngrok-free.app/sus`);
                 console.log(response.data);
                 if (response.data.status == "SUS") {
                     const currentTime = Date.now();
@@ -100,7 +102,10 @@ export const BreakIn = () => {
     return (
         <View style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
             <Text style={[styles.title, colorScheme === 'dark' ? styles.darkTitle : styles.lightTitle]}>
-                Break-In Simulation
+                Break-In
+            </Text>
+            <Text style={[styles.description, colorScheme === 'dark' ? styles.darkDescription : styles.lightDescription]}>
+                (For demo purposes.)
             </Text>
             <Text style={[styles.description, colorScheme === 'dark' ? styles.darkDescription : styles.lightDescription]}>
                 Press the button below to simulate a break-in and trigger notifications.

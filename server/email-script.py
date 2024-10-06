@@ -1,6 +1,11 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import csv
+
+
+RECIPIENTS_LIST = "recipients.csv"
+
 
 def sendSuspicions(recipients: list[str]):
     sender_email = "beluga.sturgeon.financial@gmail.com"
@@ -40,6 +45,26 @@ def sendSuspicions(recipients: list[str]):
     except Exception as e:
         print(f"Error sending email: {e}")
 
+def read_recipients():
+    recipients = []
+    try:
+        with open(RECIPIENTS_LIST, mode='r') as file:
+            reader = csv.reader(file)
+            next(reader)  # Skip header row if exists
+            for row in reader:
+                name = row[0]      # Name
+                email = row[1]     # Email
+                dorm = row[2]      # Dorm
+                room = row[3]      # Room
+                recipients.append(email)  # Store as a tuple (name, email)
+                print(recipients)
+    except Exception as e:
+        print(f"Error reading recipients: {e}")
+    return recipients
+
+
 if __name__ == "__main__":
-    recipients = ["geneustace.wicaksono@gmail.com", "taiying9627@gmail.com"]
-    sendSuspicions(recipients)
+    recipients = read_recipients()  # Read recipients from CSV
+    sendSuspicions(recipients)  # Send emails
+
+
