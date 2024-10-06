@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, RefreshControl, useColorScheme } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity, RefreshControl, useColorScheme, SafeAreaView } from 'react-native';
 
 const RecipientList = () => {
     const [recipients, setRecipients] = useState([]);
@@ -78,12 +78,8 @@ const RecipientList = () => {
     }
 
     return (
-        <View style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
+        <SafeAreaView style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
             <Text style={styles.title}>Recipients List</Text>
-            {/* refresh button */}
-            {/* <TouchableOpacity style={styles.refreshButton} onPress={onRefresh}>
-                <Text style={styles.refreshButtonText}>Refresh List</Text>
-            </TouchableOpacity> */}
             <FlatList
                 data={recipients}
                 renderItem={renderItem}
@@ -95,7 +91,7 @@ const RecipientList = () => {
                     />
                 }
             />
-        </View>
+        </SafeAreaView>
     );
 };
 
@@ -103,11 +99,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+        margin: 16
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 16,
+        marginVertical: 16,
         color: '#333',
     },
     lightContainer: {
@@ -166,18 +163,6 @@ const styles = StyleSheet.create({
     removeButtonText: {
         color: '#fff',
         fontSize: 14,
-        fontWeight: 'bold',
-    },
-    refreshButton: {
-        backgroundColor: '#007AFF',
-        padding: 12,
-        borderRadius: 8,
-        marginBottom: 16,
-        alignItems: 'center',
-    },
-    refreshButtonText: {
-        color: '#fff',
-        fontSize: 16,
         fontWeight: 'bold',
     },
 });
