@@ -8,6 +8,7 @@ const HomeScreen = () => {
 	const ngrokKey = "3661"
 
 	const [isDisabled, setIsDisabled] = useState(false);
+	const [isLocked, setIsLocked] = useState(false);
 
 
 	const handleLock = async () => {
@@ -15,6 +16,7 @@ const HomeScreen = () => {
 		console.log('attempting to lock door!');
 		setIsDisabled(true); // Disable buttons
 		await axios.get(`https://${ngrokKey}-128-84-127-2.ngrok-free.app/lock`);
+		setIsLocked(true);
 		// Wait for 1 second before re-enabling the buttons
 		setTimeout(() => {
 			setIsDisabled(false); // Re-enable buttons
@@ -26,6 +28,7 @@ const HomeScreen = () => {
 		console.log('attempting to unlock door!')
 		setIsDisabled(true);
 		await axios.get(`https://${ngrokKey}-128-84-127-2.ngrok-free.app/unlock`);
+		setIsLocked(false);
 		setTimeout(() => {
 			setIsDisabled(false);
 		}, 1000);
@@ -37,7 +40,7 @@ const HomeScreen = () => {
 		<View style={[styles.container, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
 			<Text style={[styles.title, colorScheme === 'dark' ? styles.darkTitle : styles.lightTitle]}>Big Red Smart Lock</Text>
 			<Text style={[styles.status, colorScheme === 'dark' ? styles.darkStatus : styles.lightStatus]}>
-				Status: Locked
+				Status: {isLocked ? 'Locked' : 'Unlocked'}
 			</Text>
 			<TouchableOpacity style={[styles.button, colorScheme === 'dark' ? styles.darkButton : styles.lightButton]} onPress={handleLock} disabled={isDisabled}>
 				<Text style={styles.buttonText}>Lock</Text>
