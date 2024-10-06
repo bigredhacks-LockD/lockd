@@ -5,8 +5,8 @@ const RecipientList = () => {
     const [recipients, setRecipients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [refreshing, setRefreshing] = useState(false); // For pull-to-refresh
-    const colorScheme = useColorScheme(); // To detect light or dark mode
+    const [refreshing, setRefreshing] = useState(false);
+    const colorScheme = useColorScheme();
 
     useEffect(() => {
         fetchRecipients();
@@ -18,11 +18,11 @@ const RecipientList = () => {
             const data = await response.json();
             setRecipients(data.recipients);
             setLoading(false);
-            setRefreshing(false); // Stop the refresh animation after fetching data
+            setRefreshing(false);
         } catch (err) {
             setError('Failed to fetch recipients');
             setLoading(false);
-            setRefreshing(false); // Stop the refresh animation in case of error
+            setRefreshing(false);
         }
     };
 
@@ -31,11 +31,10 @@ const RecipientList = () => {
             const response = await fetch('http://10.48.1.38:5000/remove-recipient', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }), // Include the email in the body
+                body: JSON.stringify({ email }),
             });
 
             if (response.ok) {
-                // Update the local state to remove the recipient
                 setRecipients(recipients.filter(recipient => recipient.email !== email));
             } else {
                 setError('Failed to remove recipient');
@@ -45,19 +44,18 @@ const RecipientList = () => {
         }
     };
 
-    // Handle manual refresh by pull-to-refresh gesture or pressing the refresh button
     const onRefresh = () => {
-        setRefreshing(true); // Show the refresh spinner
+        setRefreshing(true);
         fetchRecipients();
     };
 
     const renderItem = ({ item }) => (
-        <View style={[styles.item, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
-            <View style={[styles.recipientInfo, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
-                <Text style={styles.email}>{item.name}</Text>
-                <View style={[styles.details, colorScheme === 'dark' ? styles.darkContainer : styles.lightContainer]}>
-                    <Text style={styles.dorm}>Dorm: {item.dorm}</Text>
-                    <Text style={styles.room}>Room: {item.room}</Text>
+        <View style={[styles.item, colorScheme === 'dark' ? styles.darkItem : styles.lightItem]}>
+            <View style={styles.recipientInfo}>
+                <Text style={[styles.email, colorScheme === 'dark' ? styles.darkEmail : styles.lightEmail]}>{item.name}</Text>
+                <View style={styles.details}>
+                    <Text style={[styles.dorm, colorScheme === 'dark' ? styles.darkText : styles.lightText]}>Dorm: {item.dorm}</Text>
+                    <Text style={[styles.room, colorScheme === 'dark' ? styles.darkText : styles.lightText]}>Room: {item.room}</Text>
                 </View>
             </View>
             <TouchableOpacity
@@ -99,7 +97,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        margin: 16
+        margin: 16,
     },
     title: {
         fontSize: 24,
@@ -108,13 +106,12 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     lightContainer: {
-        backgroundColor: '#F5F5F5', // Light background
+        backgroundColor: '#F5F5F5',
     },
     darkContainer: {
-        backgroundColor: '#1A1A1A', // Dark background
+        backgroundColor: '#1A1A1A',
     },
     item: {
-        backgroundColor: '#fff',
         padding: 16,
         marginVertical: 8,
         borderRadius: 8,
@@ -127,6 +124,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
+    lightItem: {
+        backgroundColor: '#fff',
+    },
+    darkItem: {
+        backgroundColor: '#333', // Dark background for item
+    },
     recipientInfo: {
         flex: 1,
     },
@@ -134,7 +137,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
-        color: '#007AFF',
+    },
+    darkEmail: {
+        color: '#007AFF', // Blue color for email in dark mode
+    },
+    lightEmail: {
+        color: '#007AFF', // Blue color for email in light mode
     },
     details: {
         flexDirection: 'row',
@@ -142,11 +150,15 @@ const styles = StyleSheet.create({
     },
     dorm: {
         fontSize: 14,
-        color: '#555',
     },
     room: {
         fontSize: 14,
-        color: '#555',
+    },
+    darkText: {
+        color: '#ccc', // Lighter text for dark mode
+    },
+    lightText: {
+        color: '#555', // Darker text for light mode
     },
     error: {
         color: 'red',
