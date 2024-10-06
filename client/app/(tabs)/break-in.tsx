@@ -76,7 +76,7 @@ export const BreakIn = () => {
             let lastSuspiciousTime = 0;
 
             try {
-                const response = await axios.get(`https://3661-128-84-127-2.ngrok-free.app/sus`);
+                const response = await axios.get(`https://26ea-128-84-127-2.ngrok-free.app/sus`);
                 console.log(response.data);
 
                 if (response.data.status === "SUS") {

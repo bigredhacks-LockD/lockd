@@ -5,10 +5,10 @@ import axios from 'axios';
 
 const HomeScreen = () => {
 	const colorScheme = useColorScheme(); // Detect the current color scheme
-	const ngrokKey = "3661"
+	const ngrokKey = "26ea"
 
 	const [isDisabled, setIsDisabled] = useState(false);
-	const [isLocked, setIsLocked] = useState(false);
+	const [isLocked, setIsLocked] = useState(Boolean);
 
 
 	const handleLock = async () => {
