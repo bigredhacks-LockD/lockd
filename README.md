@@ -1,7 +1,4 @@
 # BigRedHacks 2024 
 ## 2024 Finalist and Best Beginner Hack
-Project we built for BigRedHacks. It is motorized smart lock system with remote control and break-in detection, built with Raspberry Pi and a Servo.
-You can lock and unlock the system using the app. In addition, you are able to form groups by inviting other users. Whenever a break-in or suspicious activity is detected, a push notification along with an email is sent to everyone in the group.
-The app controlling the lock was scaffolded using React Native with Expo on the frontend, and Flask for the backend. 
-The Pi hosts a web server with various API endpoints controlling the different functions of the lock, such as locking/unlocking and alerting users. The app then sends requests to those endpoings to send and receive state updates to the lock.
+Project we built for BigRedHacks. We created a motorized smart lock system with remote control and break-in detection, along with an app to go with it. The lock system was built using a Raspberry Pi and a Servo, supported in a 3-D printed case. A shock and sound sensor connected to the Pi was responsible for break-in detection. The app was scaffolded using React Native with Expos for the frontend and Flask for the backend, and connects to a web server hosted by the Pi. By sending requests to various API endpoints from the Pi's web server, the app is able to remotely unlock and lock the system, and monitor for any red flags raised by the detection system. Whenever suspicious activity is detected i.e. the sensors detect activity beyond normal threshold, a push notification and email is sent out to everyone in the group.
 
