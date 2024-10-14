@@ -19,3 +19,7 @@ class SoundSensor:
 
 
 
+
+if __name__ == "__main__":
+    sensor = SoundSensor(4)
+    
